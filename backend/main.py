@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import List
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from mangum import Mangum
 from ai_agent import get_response_from_ai_agent
 
 ALLOWED_MODEL_NAMES = [
@@ -12,7 +11,7 @@ ALLOWED_MODEL_NAMES = [
     "gpt-4o-mini"
 ]
 
-# Define your request model and suppress Pydantic warnings
+# Request model
 class RequestState(BaseModel):
     model_name: str
     model_provider: str
@@ -20,23 +19,24 @@ class RequestState(BaseModel):
     messages: List[str]
     allow_search: bool
 
-    # Suppress warnings about "model_" namespace
+    # Suppress Pydantic warnings about "model_" namespace
     model_config = {
         "protected_namespaces": ()
     }
 
+# Initialize FastAPI app
 app = FastAPI(title="LangGraph AI Agent")
 
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to your frontend URL in production
+    allow_origins=["*"],  # Replace with frontend URL in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Root endpoint (optional, prevents 500 on "/")
+# Root endpoint
 @app.get("/")
 def root():
     return {"message": "FastAPI backend is running."}
@@ -46,7 +46,7 @@ def root():
 def chat_endpoint(request: RequestState):
     if request.model_name not in ALLOWED_MODEL_NAMES:
         return {"error": "Model not allowed"}
-    
+
     llm_id = request.model_name
     query = request.messages[-1]
     allow_search = request.allow_search
@@ -55,11 +55,3 @@ def chat_endpoint(request: RequestState):
 
     response = get_response_from_ai_agent(llm_id, query, allow_search, system_prompt, provider)
     return response
-
-# Serverless handler for Vercel
-handler = Mangum(app)
-
-# Only run uvicorn locally
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
