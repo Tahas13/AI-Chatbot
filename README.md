@@ -2,6 +2,12 @@
 
 A modern, responsive chatbot interface built with Next.js and TypeScript that connects to a FastAPI backend. Features a sleek dark theme with cyan and amber accents, provider selection, and real-time chat functionality.
 
+## 🚀 Live Demo
+
+- **Frontend**: [https://ai-chatbot-zru2.vercel.app/](https://ai-chatbot-zru2.vercel.app/)
+- **Backend API**: [https://ai-chatbot-zugr.vercel.app/](https://ai-chatbot-zugr.vercel.app/)
+- **API Documentation**: [https://ai-chatbot-zugr.vercel.app/docs](https://ai-chatbot-zugr.vercel.app/docs)
+
 ## Features
 
 - 🤖 **Multi-Provider Support**: Choose between OpenAI and Groq AI providers
@@ -46,6 +52,10 @@ A modern, responsive chatbot interface built with Next.js and TypeScript that co
 
 ## Getting Started
 
+### Quick Start (Using Deployed Version)
+
+Simply visit the live demo at [https://ai-chatbot-zru2.vercel.app/](https://ai-chatbot-zru2.vercel.app/) to start using the chatbot immediately!
+
 ### Prerequisites
 
 - Node.js 18+ and npm
@@ -62,35 +72,53 @@ A modern, responsive chatbot interface built with Next.js and TypeScript that co
    npm install
    \`\`\`
 
-2. **Start the development server:**
+2. **Configure backend URL:**
+   The app is pre-configured to use the deployed backend at `https://ai-chatbot-zugr.vercel.app/`. For local development, update the backend URL in your environment or code.
+
+3. **Start the development server:**
    \`\`\`bash
    npm run dev
    \`\`\`
 
-3. **Open your browser:**
+4. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ### Backend Setup
 
-1. **Create a FastAPI backend** with the following endpoint:
+The backend is already deployed and running at [https://ai-chatbot-zugr.vercel.app/](https://ai-chatbot-zugr.vercel.app/). 
+
+For local development or custom deployment:
+
+1. **Backend structure:**
    \`\`\`python
    # main.py
-   from fastapi import FastAPI
+   from fastapi import FastAPI, HTTPException
+   from fastapi.middleware.cors import CORSMiddleware
    from pydantic import BaseModel
    from typing import List
+   import os
    
-   app = FastAPI()
+   app = FastAPI(title="LangGraph AI Chatbot API")
    
-   class ChatRequest(BaseModel):
-       message: str
-       provider: str
-       model: str
-       internet_search: bool
+   # CORS middleware for frontend integration
+   app.add_middleware(
+       CORSMiddleware,
+       allow_origins=["*"],
+       allow_credentials=True,
+       allow_methods=["*"],
+       allow_headers=["*"],
+   )
+   
+   class RequestState(BaseModel):
+       model_name: str
+       model_provider: str
        system_prompt: str
+       messages: List[str]
+       allow_search: bool
    
    @app.post("/chat")
-   async def chat_endpoint(request: ChatRequest):
-       # Your AI logic here
+   async def chat_endpoint(request: RequestState):
+       # AI processing logic here
        return {"response": "Your AI response"}
    \`\`\`
 
@@ -126,17 +154,26 @@ A modern, responsive chatbot interface built with Next.js and TypeScript that co
 
 ### Backend URL
 
-The frontend connects to `http://localhost:8000` by default. Update the `backendUrl` state in `app/page.tsx` to change this.
+The frontend connects to the deployed backend at `https://ai-chatbot-zugr.vercel.app/` by default. For local development, update the `backendUrl` in your configuration.
 
-## Usage
+## 🌐 Deployment
 
-1. **Select Provider**: Choose between OpenAI or Groq
-2. **Pick Model**: Select from available models for your provider
-3. **Configure Settings**: 
-   - Toggle internet search on/off
-   - Customize the system prompt
-4. **Start Chatting**: Type your message and press Enter or click Send
-5. **Manage Chat**: Use the Clear Chat button to reset the conversation
+### Frontend Deployment (Vercel)
+
+The frontend is deployed on Vercel at [https://ai-chatbot-zru2.vercel.app/](https://ai-chatbot-zru2.vercel.app/)
+
+To deploy your own version:
+1. Fork this repository
+2. Connect to Vercel
+3. Deploy with default Next.js settings
+
+### Backend Deployment (Vercel)
+
+The FastAPI backend is deployed on Vercel at [https://ai-chatbot-zugr.vercel.app/](https://ai-chatbot-zugr.vercel.app/)
+
+Required environment variables for backend:
+- `OPENAI_API_KEY` - Your OpenAI API key
+- `GROQ_API_KEY` - Your Groq API key (optional)
 
 ## API Integration
 
@@ -144,11 +181,11 @@ The frontend sends POST requests to `/chat` with this structure:
 
 \`\`\`typescript
 {
-  message: string,
-  provider: "openai" | "groq",
-  model: string,
-  internet_search: boolean,
-  system_prompt: string
+  model_name: string,
+  model_provider: "openai" | "groq",
+  system_prompt: string,
+  messages: string[],
+  allow_search: boolean
 }
 \`\`\`
 
@@ -209,11 +246,11 @@ This project is open source and available under the [MIT License](LICENSE).
 ## Support
 
 For issues and questions:
-- Check the [Issues](../../issues) page
+- Try the live demo: [https://ai-chatbot-zru2.vercel.app/](https://ai-chatbot-zru2.vercel.app/)
+- Check the API docs: [https://ai-chatbot-zugr.vercel.app/docs](https://ai-chatbot-zugr.vercel.app/docs)
 - Review the FastAPI backend setup
 - Ensure all environment variables are configured
-- Verify the backend is running on the correct port
 
 ---
 
-Built with ❤️ using Next.js, TypeScript, and modern web technologies.
+Built with ❤️ using Next.js, TypeScript, FastAPI, and deployed on Vercel.
