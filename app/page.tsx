@@ -42,8 +42,9 @@ export default function ChatbotPage() {
   const [systemPrompt, setSystemPrompt] = useState("You are a helpful AI assistant.")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Fetch backend URL from environment
+  // Fetch backend URL from environment variable
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
+  console.log("Using backend URL:", backendUrl)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
