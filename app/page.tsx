@@ -81,7 +81,7 @@ export default function ChatbotPage() {
 
       const requestData: ChatRequest = {
         model_name: model,
-        model_provider: provider,
+        model_provider: provider.toLowerCase(),
         system_prompt: systemPrompt,
         messages: allMessages,
         allow_search: internetSearch,
