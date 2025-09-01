@@ -5,7 +5,7 @@ import requests
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+#load_dotenv()
 
 # Initialize Groq client (lazy init so it only creates if needed)
 groq_client = None
